@@ -8,6 +8,10 @@ This example demonstrates safe cross-contract invocation patterns in Soroban, in
 - **Security Patterns** - Reentrancy protection, auth validation, and defensive coding
 - **Comprehensive Tests** - Coverage of both success and failure scenarios
 
+## Origin and License
+
+This is an original example created for Soroban Cookbook, introduced in commit `4349e3b` ("docs: add cross-contract pattern example"). No external source is identified. The crate is licensed under MIT, consistent with the repository's root license.
+
 ## Contracts
 
 ### Token Contract (`token.rs`)
