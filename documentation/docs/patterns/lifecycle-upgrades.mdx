@@ -111,15 +111,15 @@ The most common way to upgrade is to call `env.deployer().update_current_contrac
 - *Use when:* You need to fix a bug or add features without changing the contract's address.
 - *Avoid when:* You need to change the fundamental architecture or storage model in a way that is incompatible with existing state.
 
-See the tested `['upgradeable'`](https://github.com/Soroban-Cookbook/Soroban_Cookbook_online/tree/main/examples/upgradeable) for a complete admin-gated upgrade flow with storage preservation and integration tests.
+The canonical Soroban learning path in this repository is this guide, followed by the tested [`upgradeable` example](https://github.com/Soroban-Cookbook/Soroban_Cookbook_online/tree/main/examples/upgradeable). It demonstrates an admin-gated self-upgrade, storage preservation, and lazy migration. It is the only Soroban upgrade implementation currently included; proxy, proxy-admin, beacon, and factory upgrade architectures are out of scope.
 
-For high-security upgrades, also consider combining multisig and timelock: all required signers must approve, and execution is only possible after a delay. See the tested `['multisig-timelock-upgrade'`](https://github.com/Soroban-Cookbook/Soroban_Cookbook_online/tree/main/examples/multisig-timelock-upgrade) for a complete flow with tests for both gates.
+The similarly named `multisig-timelock-upgrade` directory is a CosmWasm crate, not a Soroban example, and is not part of this learning path.
 
 ### Example File Map
 
-- `examples/upgradeable/src/lib.rs` — contract with `upgrade` gated by `admin.require_auth()` (matches the integration tests).
+- `examples/upgradeable/src/lib.rs` — contract with `upgrade` gated by `admin.require_auth()`.
 - `examples/upgradeable/v2` — the upgraded contract used in the upgrade tests; CI builds `v2` first to produce the target Wasm.
-- `examples/upgradeable/tests/test_upgrade.rs` — contains `test_upgrade_requires_admin_auth` and state-preservation tests.
+- `examples/upgradeable/src/test.rs` — covers admin authorization, state preservation, migration, and double-migration protection.
 
 The upgrade test flow installs the `v2` Wasm hash, invokes `upgrade` as the admin, then verifies the contract ID and storage are preserved while the code hash matches the `v2` build.
 

@@ -5,14 +5,6 @@ mod tests {
     use crate::token::{Token, TokenClient, TokenError};
     use crate::vault::{Vault, VaultClient, VaultError};
     use soroban_sdk::{
-        testutils::{Address as _, Events},
-        Address, Env,
-    };
-    use soroban_sdk::testutils::Events;
-    use soroban_sdk::{testutils::Address as _, Address, Env};
-
-    fn setup_contracts() -> (Env, Address, TokenClient<'static>, Address, VaultClient<'static>, Address) {
-    use soroban_sdk::{
         testutils::{Address as _, Events as _},
         Address, Env,
     };
@@ -260,20 +252,13 @@ mod tests {
         vault_client.deposit(&user, &amount);
 
         // Check that events were emitted from both contracts.
-        let events = env.events().all();
-        assert!(events.len() >= 2, "expected at least a token and vault event");
-        
-        // Perform deposit which involves cross-contract call
-        vault_client.deposit(&user, &amount);
-
-        // Event checks removed for compatibility with sdk v27
-
-        // Perform deposit which involves a cross-contract call (vault -> token)
-        vault_client.deposit(&user, &amount);
-
         // Both the token (which emitted a transfer event) and the vault (which
         // emitted a deposit event) should have emitted events.
         let all_events = env.events().all();
+        assert!(
+            all_events.events().len() >= 2,
+            "expected at least a token and vault event"
+        );
         assert!(
             !all_events.filter_by_contract(&token_id).events().is_empty(),
             "Should have a transfer event from the token contract"

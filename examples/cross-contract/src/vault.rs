@@ -9,7 +9,6 @@
 
 use soroban_sdk::{contract, contracterror, contractimpl, contracttype, Address, Env, Symbol};
 use crate::token::{TokenClient, TokenError};
-use soroban_sdk::{contract, contracterror, contractimpl, contracttype, Address, Env, Symbol};
 
 #[derive(Clone)]
 #[contracttype]
@@ -20,11 +19,6 @@ pub enum DataKey {
     EmergencyMode,
 }
 
-#[contracterror]
-#[derive(Clone, Copy, Debug, Eq, PartialEq, PartialOrd, Ord)]
-
-#[contracterror]
-#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 #[contracterror]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[repr(u32)]
@@ -109,20 +103,8 @@ impl Vault {
                 );
                 Ok(())
             }
-            },
             Ok(Err(_)) | Err(_) => {
-                // Revert the state change since the token transfer failed
-                env.storage().persistent().set(&DataKey::UserBalance(from), &current_balance);
-            }
-            Ok(Err(_token_error)) => {
-                // The token contract returned an error - revert the balance change.
-                env.storage()
-                    .persistent()
-                    .set(&DataKey::UserBalance(from.clone()), &current_balance);
-                Err(VaultError::ExternalCallFailed)
-            }
-            Err(_host_error) => {
-                // Host-level error (panic, budget, etc.) - revert the balance change.
+                // Revert the balance change when the token call fails.
                 env.storage()
                     .persistent()
                     .set(&DataKey::UserBalance(from.clone()), &current_balance);
@@ -175,20 +157,8 @@ impl Vault {
                 );
                 Ok(())
             }
-            },
             Ok(Err(_)) | Err(_) => {
-                // Revert the balance change
-                env.storage().persistent().set(&DataKey::UserBalance(to), &current_balance);
-            }
-            Ok(Err(_token_error)) => {
-                // The token contract returned an error - revert the balance change.
-                env.storage()
-                    .persistent()
-                    .set(&DataKey::UserBalance(to.clone()), &current_balance);
-                Err(VaultError::ExternalCallFailed)
-            }
-            Err(_host_error) => {
-                // Host-level error (panic, budget, etc.) - revert the balance change.
+                // Revert the balance change when the token call fails.
                 env.storage()
                     .persistent()
                     .set(&DataKey::UserBalance(to.clone()), &current_balance);
@@ -242,9 +212,6 @@ impl Vault {
                 env.storage().instance().set(&DataKey::EmergencyMode, &true);
                 Ok(-1)
             },
-                // Contract returned an error - handle gracefully
-                Ok(-1) // Fallback value
-            }
             Err(_host_error) => {
                 // Both contract-level and host-level failure modes are treated as
                 // recoverable here: the vault falls back to a safe default and enables

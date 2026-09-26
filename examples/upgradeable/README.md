@@ -10,6 +10,12 @@ A contract that swaps its own Wasm for a new version while preserving stored sta
 - **Lazy storage migration** with version byte tracking
 - Double-migrate protection (panics if called twice)
 
+## Learning path and scope
+
+Start with the [Lifecycle and Upgrade Safety guide](../../documentation/docs/patterns/lifecycle-upgrades.mdx), then work through this crate. This is the repository's only Soroban upgrade implementation: a contract upgrades its own Wasm behind an admin authorization check.
+
+Proxy, proxy-admin, beacon, and factory upgrade architectures are not included in this crate or the current Soroban examples. They are out of scope here, not implied follow-on steps.
+
 ## Build
 
 ```bash
